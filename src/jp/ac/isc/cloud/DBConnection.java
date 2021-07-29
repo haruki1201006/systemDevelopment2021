@@ -6,11 +6,34 @@ public final class DBConnection {
 	private DBConnection() {}
 
 	public static Connection openConnection() {
+
+		String connectString = System.getenv("MYSQLCONNSTR_localdb");
+		String database = "";
+		String port = "";
+		String username = "";
+		String password = "";
+
+		String[] strArray = connectString.split(";");
+
+		for(int i = 0; i < strArray.length; i++) {
+			String[] paramArray = strArray[i].split("=");
+			switch(i) {
+			case 0: database = paramArray[1];
+			continue;
+			case 1: port = paramArray[1];
+			continue;
+			case 2: username = paramArray[1];
+			continue;
+			case 3: password = paramArray[1];
+			continue;
+			}
+		}
 		Connection users = null;
 
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			users = DriverManager.getConnection("jdbc:mysql://localhost/servlet_db?useUnicode=true&characterEncoding=utf8", "root", "");
+	//		users = DriverManager.getConnection("jdbc:mysql://localhost/servlet_db?useUnicode=true&characterEncoding=utf8", "root", "");
+			users = DriverManager.getConnection("jdbc:mysql://" + port + "/" + database + "?useUnicode=true&characterEncoding=utf8",username,password);
 		}catch(SQLException e){
 			e.printStackTrace();
 		}catch(ClassNotFoundException e) {
